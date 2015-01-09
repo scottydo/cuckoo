@@ -4,7 +4,7 @@ REST API
 
 As mentioned in :doc:`submit`, Cuckoo provides a simple and lightweight REST
 API server implemented in `Bottle.py`_, therefore in order to make the service
-work you'll need it installed, Bottle release must be 0.10 or above.
+work you'll need it installed. Bottle release must be 0.10 or above.
 
 On Debian/Ubuntu::
 
@@ -23,14 +23,14 @@ In order to start the API server you can simply do::
 
     $ ./utils/api.py
 
-By default it will bind the service on **localhost:8090**. If you want to change those values, you can for example with::
+By default it will bind the service on **localhost:8090**. If you want to change those values, you can for example do this::
 
     $ ./utils/api.py --host 0.0.0.0 --port 1337
 
 Resources
 =========
 
-Following is a list of currently available resources and a brief description. For details click on the resource name.
+Following is a list of currently available resources and a brief description of each one. For details click on the resource name.
 
 +-----------------------------------+------------------------------------------------------------------------------------------------------------------+
 | Resource                          | Description                                                                                                      |
@@ -49,9 +49,13 @@ Following is a list of currently available resources and a brief description. Fo
 | ``GET`` :ref:`tasks_report`       | Returns the report generated out of the analysis of the task associated with the specified ID.                   |
 |                                   | You can optionally specify which report format to return, if none is specified the JSON report will be returned. |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------------+
+| ``GET`` :ref:`tasks_shots`        | Retrieves one or all screenshots associated with a given analysis task ID.                                       |
++-----------------------------------+------------------------------------------------------------------------------------------------------------------+
 | ``GET`` :ref:`files_view`         | Search the analyzed binaries by MD5 hash, SHA256 hash or internal ID (referenced by the tasks details).          |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------------+
 | ``GET`` :ref:`files_get`          | Returns the content of the binary with the specified SHA256 hash.                                                |
++-----------------------------------+------------------------------------------------------------------------------------------------------------------+
+| ``GET`` :ref:`pcap_get`           | Returns the content of the PCAP associated with the given task.                                                  |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------------+
 | ``GET`` :ref:`machines_list`      | Returns the list of analysis machines available to Cuckoo.                                                       |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------------+
@@ -60,6 +64,7 @@ Following is a list of currently available resources and a brief description. Fo
 | ``GET`` :ref:`cuckoo_status`      | Returns the basic cuckoo status, including version and tasks overview                                            |
 +-----------------------------------+------------------------------------------------------------------------------------------------------------------+
 
+.. highlight:: javascript
 
 .. _tasks_create_file:
 
@@ -81,7 +86,7 @@ Following is a list of currently available resources and a brief description. Fo
             }
 
         **Form parameters**:
-            * ``file`` *(required)* - path to the file to submit
+            * ``file`` *(required)* - sample file (multipart encoded file content)
             * ``package`` *(optional)* - analysis package to be used for the analysis
             * ``timeout`` *(optional)* *(int)* - analysis timeout (in seconds)
             * ``priority`` *(optional)* *(int)* - priority to assign to the task (1-3)
@@ -151,48 +156,48 @@ Following is a list of currently available resources and a brief description. Fo
             {
                 "tasks": [
                     {
-                        "category": "url", 
-                        "machine": null, 
-                        "errors": [], 
-                        "target": "http://www.malicious.site", 
-                        "package": null, 
-                        "sample_id": null, 
-                        "guest": {}, 
-                        "custom": null, 
-                        "priority": 1, 
-                        "platform": null, 
-                        "options": null, 
-                        "status": "pending", 
-                        "enforce_timeout": false, 
-                        "timeout": 0, 
+                        "category": "url",
+                        "machine": null,
+                        "errors": [],
+                        "target": "http://www.malicious.site",
+                        "package": null,
+                        "sample_id": null,
+                        "guest": {},
+                        "custom": null,
+                        "priority": 1,
+                        "platform": null,
+                        "options": null,
+                        "status": "pending",
+                        "enforce_timeout": false,
+                        "timeout": 0,
                         "memory": false,
                         "tags": []
-                        "id": 1, 
-                        "added_on": "2012-12-19 14:18:25", 
+                        "id": 1,
+                        "added_on": "2012-12-19 14:18:25",
                         "completed_on": null
-                    }, 
+                    },
                     {
-                        "category": "file", 
-                        "machine": null, 
-                        "errors": [], 
-                        "target": "/tmp/malware.exe", 
-                        "package": null, 
-                        "sample_id": 1, 
-                        "guest": {}, 
-                        "custom": null, 
-                        "priority": 1, 
-                        "platform": null, 
-                        "options": null, 
-                        "status": "pending", 
-                        "enforce_timeout": false, 
-                        "timeout": 0, 
+                        "category": "file",
+                        "machine": null,
+                        "errors": [],
+                        "target": "/tmp/malware.exe",
+                        "package": null,
+                        "sample_id": 1,
+                        "guest": {},
+                        "custom": null,
+                        "priority": 1,
+                        "platform": null,
+                        "options": null,
+                        "status": "pending",
+                        "enforce_timeout": false,
+                        "timeout": 0,
                         "memory": false,
                         "tags": [
                                     "32bit",
                                     "acrobat_6",
                                 ],
-                        "id": 2, 
-                        "added_on": "2012-12-19 14:18:25", 
+                        "id": 2,
+                        "added_on": "2012-12-19 14:18:25",
                         "completed_on": null
                     }
                 ]
@@ -297,6 +302,26 @@ Following is a list of currently available resources and a brief description. Fo
             * ``400`` - invalid report format
             * ``404`` - report not found
 
+.. _tasks_shots:
+
+/tasks/screenshots
+------------------
+
+    **GET /tasks/screenshots/** *(int: id)* **/** *(str: number)*
+
+        Returns one or all screenshots associated with the specified task ID.
+
+        **Example request**::
+
+            wget http://localhost:8090/tasks/screenshots/1
+
+        **Parameters**:
+            * ``id`` *(required)* *(int)* - ID of the task to get the report for
+            * ``screenshot`` *(optional)* - numerical identifier of a single screenshot (e.g. 0001, 0002)
+
+        **Status codes**:
+            * ``404`` - file or folder not found
+
 .. _files_view:
 
 /files/view
@@ -318,14 +343,14 @@ Following is a list of currently available resources and a brief description. Fo
 
             {
                 "sample": {
-                    "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709", 
-                    "file_type": "empty", 
-                    "file_size": 0, 
-                    "crc32": "00000000", 
-                    "ssdeep": "3::", 
-                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855", 
-                    "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e", 
-                    "id": 1, 
+                    "sha1": "da39a3ee5e6b4b0d3255bfef95601890afd80709",
+                    "file_type": "empty",
+                    "file_size": 0,
+                    "crc32": "00000000",
+                    "ssdeep": "3::",
+                    "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                    "sha512": "cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e",
+                    "id": 1,
                     "md5": "d41d8cd98f00b204e9800998ecf8427e"
                 }
             }
@@ -347,7 +372,7 @@ Following is a list of currently available resources and a brief description. Fo
 
     **GET /files/get/** *(str: sha256)*
 
-        Returns the binary content of the file matching the specified SHA256 hash.
+         Returns the binary content of the file matching the specified SHA256 hash.
 
         **Example request**::
 
@@ -356,6 +381,24 @@ Following is a list of currently available resources and a brief description. Fo
         **Status codes**:
             * ``200`` - no error
             * ``404`` - file not found
+
+.. _pcap_get:
+
+/pcap/get
+----------
+
+    **GET /pcap/get/** *(int: task)*
+
+        Returns the content of the PCAP associated with the given task.
+
+        **Example request**::
+
+            curl http://localhost:8090/pcap/get/1 > dump.pcap
+
+        **Status codes**:
+            * ``200`` - no error
+            * ``404`` - file not found
+
 
 .. _machines_list:
 
@@ -375,21 +418,21 @@ Following is a list of currently available resources and a brief description. Fo
             {
                 "machines": [
                     {
-                        "status": null, 
-                        "locked": false, 
-                        "name": "cuckoo1", 
+                        "status": null,
+                        "locked": false,
+                        "name": "cuckoo1",
                         "resultserver_ip": "192.168.56.1",
                         "ip": "192.168.56.101",
                         "tags": [
                                     "32bit",
                                     "acrobat_6",
                                 ],
-                        "label": "cuckoo1", 
-                        "locked_changed_on": null, 
-                        "platform": "windows", 
+                        "label": "cuckoo1",
+                        "locked_changed_on": null,
+                        "platform": "windows",
                         "snapshot": null,
                         "interface": null,
-                        "status_changed_on": null, 
+                        "status_changed_on": null,
                         "id": 1,
                         "resultserver_port": "2042"
                     }
@@ -457,22 +500,22 @@ Following is a list of currently available resources and a brief description. Fo
 
             {
                 "tasks": {
-                    "reported": 165, 
-                    "running": 2, 
-                    "total": 167, 
-                    "completed": 0, 
+                    "reported": 165,
+                    "running": 2,
+                    "total": 167,
+                    "completed": 0,
                     "pending": 0
-                }, 
+                },
                 "version": "1.0",
                 "protocol_version": 1,
-                "hostname": "Patient0", 
+                "hostname": "Patient0",
                 "machines": {
-                    "available": 4, 
+                    "available": 4,
                     "total": 5
                 }
                 "tools":["vanilla"]
             }
-            
+
         **Status codes**:
             * ``200`` - no error
             * ``404`` - machine not found

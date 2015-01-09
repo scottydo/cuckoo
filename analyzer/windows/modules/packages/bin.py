@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2014 Cuckoo Sandbox Developers.
+# Copyright (C) 2010-2015 Cuckoo Foundation.
 # This file is part of Cuckoo Sandbox - http://www.cuckoosandbox.org
 # See the file 'docs/LICENSE' for copying permission.
 
@@ -14,16 +14,4 @@ class Shellcode(Package):
         p.execute(path="bin/execsc.exe", args=path, suspended=True)
         p.inject(dll)
         p.resume()
-
         return p.pid
-
-    def check(self):
-        return True
-
-    def finish(self):
-        if self.options.get("procmemdump", False):
-            for pid in self.pids:
-                p = Process(pid=pid)
-                p.dump_memory()
-
-        return True

@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2014 Cuckoo Sandbox Developers.
+# Copyright (C) 2010-2015 Cuckoo Foundation.
 # This file is part of Cuckoo Sandbox - http://www.cuckoosandbox.org
 # See the file 'docs/LICENSE' for copying permission.
 
@@ -16,3 +16,4 @@ PATHS = {"root"   : ROOT,
          "drop"   : os.path.join(ROOT, "drop")}
 
 PIPE = "\\\\.\\PIPE\\" + random_string(6, 10)
+SHUTDOWN_MUTEX = "Global\\" + random_string(6, 10)

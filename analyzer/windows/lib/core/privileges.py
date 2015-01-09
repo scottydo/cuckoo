@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2014 Cuckoo Sandbox Developers.
+# Copyright (C) 2010-2015 Cuckoo Foundation.
 # This file is part of Cuckoo Sandbox - http://www.cuckoosandbox.org
 # See the file 'docs/LICENSE' for copying permission.
 
@@ -34,14 +34,14 @@ def grant_debug_privilege(pid=None):
         h_process = KERNEL32.OpenProcess(PROCESS_ALL_ACCESS, False, pid)
 
     if not h_process:
-        return False    
+        return False
 
-    h_current_token = wintypes.HANDLE() 
+    h_current_token = wintypes.HANDLE()
     if not ADVAPI32.OpenProcessToken(h_process,
                                      TOKEN_ALL_ACCESS,
                                      h_current_token):
         return False
-    
+
     se_original_luid = LUID()
     if not ADVAPI32.LookupPrivilegeValueW(None,
                                           "SeDebugPrivilege",
@@ -58,7 +58,7 @@ def grant_debug_privilege(pid=None):
     if not ADVAPI32.AdjustTokenPrivileges(h_current_token, False, token_privs,
                                           0, None, None):
         return False
-    
+
     KERNEL32.CloseHandle(h_current_token)
     KERNEL32.CloseHandle(h_process)
     return True

@@ -8,7 +8,7 @@ Cuckoo relies on six main configuration files:
     * :ref:`auxiliary_conf`: for enabling and configuring auxiliary modules.
     * :ref:`machinery_conf`: for defining the options for your virtualization software
         (the file has the same name of the machinery module you choose in cuckoo.conf).
-    * :ref:`memory_conf`: Volatility configuration
+    * :ref:`memory_conf`: Volatility configuration.
     * :ref:`processing_conf`: for enabling and configuring processing modules.
     * :ref:`reporting_conf`: for enabling or disabling report formats.
 
@@ -22,11 +22,11 @@ cuckoo.conf
 The first file to edit is *conf/cuckoo.conf*, it contains the generic configuration
 options that you might want to verify before launching Cuckoo.
 
-The file is largely commented and self-explainatory, but some of the options you might
+The file is largely commented and self-explaining, but some of the options you might
 want to pay more attention to are:
 
-    * ``machinery`` in ``[cuckoo]``: this defines which Machinery module you want Cuckoo to use to interact with your analysis machines. The value must be the name of the module without extention.
-    * ``ip`` and ``port`` in ``[resultserver]``: defines the local IP address and port that Cuckoo is going to use to bind the result server on. Make sure this is aligned with the network configuration of your analysis machines, or they won't be able to return the collected results.
+    * ``machinery`` in ``[cuckoo]``: this defines which Machinery module you want Cuckoo to use to interact with your analysis machines. The value must be the name of the module without extension.
+    * ``ip`` and ``port`` in ``[resultserver]``: defines the local IP address and port that Cuckoo is going to use to bind the result server on. Make sure this matches the network configuration of your analysis machines, or they won't be able to return the collected results.
     * ``connection`` in ``[database]``: defines how to connect to the internal database. You can use any DBMS supported by `SQLAlchemy`_ using a valid `Database Urls`_ syntax.
 
 .. _`SQLAlchemy`: http://www.sqlalchemy.org/
@@ -102,7 +102,7 @@ Following is the default *conf/virtualbox.conf* file::
     [cuckoo1]
     # Specify the label name of the current machine as specified in your
     # VirtualBox configuration.
-    label = cuckoo1 
+    label = cuckoo1
 
     # Specify the operating system platform used by current machine
     # [windows/darwin/linux].
@@ -112,7 +112,7 @@ Following is the default *conf/virtualbox.conf* file::
     # IP address is valid and that the host machine is able to reach it. If not,
     # the analysis will fail.
     ip = 192.168.56.101
-    
+
     # (Optional) Specify the snapshot name to use. If you do not specify a snapshot
     # name, the VirtualBox MachineManager will use the current snapshot.
     # Example (Snapshot1 is the snapshot name):
@@ -123,10 +123,10 @@ Following is the default *conf/virtualbox.conf* file::
     # overrides the default interface specified in cuckoo.conf
     # Example (virbr0 is the interface name):
     # interface = virbr0
-    
+
     # (Optional) Specify the IP of the Result Server, as your virtual machine sees it.
     # The Result Server will always bind to the address and port specified in cuckoo.conf,
-    # however you could set up your virtual network to use NAT/PAT, so you can specify here 
+    # however you could set up your virtual network to use NAT/PAT, so you can specify here
     # the IP address for the Result Server as your machine sees it. If you don't specify an
     # address here, the machine will use the default value from cuckoo.conf.
     # Example:
@@ -171,7 +171,7 @@ Following is the default *conf/kvm.conf* file::
     # the analysis will fail. You may want to configure your network settings in
     # /etc/libvirt/<hypervisor>/networks/
     ip = 192.168.122.105
-    
+
     # (Optional) Specify the snapshot name to use. If you do not specify a snapshot
     # name, the KVM MachineManager will use the current snapshot.
     # Example (Snapshot1 is the snapshot name):
@@ -185,7 +185,7 @@ Following is the default *conf/kvm.conf* file::
 
     # (Optional) Specify the IP of the Result Server, as your virtual machine sees it.
     # The Result Server will always bind to the address and port specified in cuckoo.conf,
-    # however you could set up your virtual network to use NAT/PAT, so you can specify here 
+    # however you could set up your virtual network to use NAT/PAT, so you can specify here
     # the IP address for the Result Server as your machine sees it. If you don't specify an
     # address here, the machine will use the default value from cuckoo.conf.
     # Example:
@@ -208,9 +208,10 @@ Following is the default *conf/kvm.conf* file::
 memory.conf
 ===============
 
-The volatility tool offers a large set of plugins for memory dump analysis. Some of them are quite slow.
-In volatility.conf enables you to enable or disable the plugins of your choice.
+The Volatility tool offers a large set of plugins for memory dump analysis. Some of them are quite slow.
+In volatility.conf lets you to enable or disable the plugins of your choice.
 To use Volatility you have to follow two steps:
+
  * Enable it before in processing.conf
  * Enable memory_dump in cuckoo.conf
 
@@ -239,7 +240,7 @@ After that every plugin has an own section for configuration::
     enabled = off
     filter = on
 
-The filter configuration helps you to remove known clean data from the resulting report. It can be configured seperately for every plugin.
+The filter configuration helps you to remove known clean data from the resulting report. It can be configured separately for every plugin.
 
 The filter itself is configured in the [mask] section.
 You can enter a list of pids in pid_generic to filter out processes::
@@ -284,6 +285,9 @@ You will find a section for each processing module::
     enabled = no
 
     [network]
+    enabled = yes
+
+    [procmemory]
     enabled = yes
 
     [static]
@@ -344,14 +348,6 @@ It contains the following sections::
     enabled = no
     host = 127.0.0.1
     port = 27017
-
-    [hpfclient]
-    enabled = no
-    host =
-    port = 10000
-    ident =
-    secret =
-    channel =
 
 By setting those option to *on* or *off* you enable or disable the generation
 of such reports.

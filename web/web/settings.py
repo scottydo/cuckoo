@@ -1,14 +1,28 @@
-# Copyright (C) 2010-2014 Cuckoo Sandbox Developers.
+# Copyright (C) 2010-2015 Cuckoo Foundation.
 # This file is part of Cuckoo Sandbox - http://www.cuckoosandbox.org
 # See the file 'docs/LICENSE' for copying permission.
 
+import sys
 import os
-
-DEBUG = True
-TEMPLATE_DEBUG = DEBUG
 
 # Cuckoo path.
 CUCKOO_PATH = os.path.join(os.getcwd(), "..")
+sys.path.append(CUCKOO_PATH)
+
+from lib.cuckoo.common.config import Config
+
+cfg = Config("reporting").mongodb
+
+# Checks if mongo reporting is enabled in Cuckoo.
+if not cfg.get("enabled"):
+    raise Exception("Mongo reporting module is not enabled in cuckoo, aborting!")
+
+# Get connection options from reporting.conf.
+MONGO_HOST = cfg.get("host", "127.0.0.1")
+MONGO_PORT = cfg.get("port", 27017)
+
+DEBUG = True
+TEMPLATE_DEBUG = DEBUG
 
 # Database settings. We don't need it.
 DATABASES = {}
@@ -69,10 +83,6 @@ STATICFILES_DIRS = (
     os.path.join(os.getcwd(), 'static'),
 )
 
-CUCKOO_FILE_UPLOAD_TEMP_DIR = (
-    os.path.join(os.getcwd(), 'tmp_uploads'),
-)
-
 # List of finder classes that know how to find static files in
 # various locations.
 STATICFILES_FINDERS = (
@@ -98,17 +108,13 @@ MIDDLEWARE_CLASSES = (
     "web.headers.CuckooHeaders",
 )
 
-FILE_UPLOAD_HANDLERS = (
-    'web.upload.CuckooTemporaryFileUploadHandler',
-)
-
 ROOT_URLCONF = 'web.urls'
 
 # Python dotted path to the WSGI application used by Django's runserver.
 WSGI_APPLICATION = 'web.wsgi.application'
 
 TEMPLATE_DIRS = (
-    "templates"
+    "templates",
 )
 
 INSTALLED_APPS = (

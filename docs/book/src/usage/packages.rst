@@ -3,12 +3,12 @@ Analysis Packages
 =================
 
 The **analysis packages** are a core component of Cuckoo Sandbox.
-They consist in structured Python classes which, executed in the guest machines,
+They consist in structured Python classes which, when executed in the guest machines,
 describe how Cuckoo's analyzer component should conduct the analysis.
 
 Cuckoo provides some default analysis packages that you can use, but you are
-able to create your own or eventually modify the existing ones.
-You can find them located at *analyzer/windows/modules/packages/*.
+able to create your own or modify the existing ones.
+You can find them at *analyzer/windows/modules/packages/*.
 
 As described in :doc:`../usage/submit`, you can specify some options to the
 analysis packages in the form of ``key1=value1,key2=value2``. The existing analysis
@@ -38,7 +38,7 @@ Following is the list of existing packages in alphabetical order:
             * ``procmemdump`` *[yes/no]*: if enabled, take memory dumps of all actively monitored processes.
             * ``dll``: specify the name of an optional DLL to be used as a replacement for cuckoomon.dll.
 
-    * ``dll``: used to run and analyze **Dinamically Linked Libraries**.
+    * ``dll``: used to run and analyze **Dynamically Linked Libraries**.
 
         **Options**:
             * ``free`` *[yes/no]*: if enabled, no behavioral logs will be produced and the malware will be executed freely.
@@ -97,7 +97,21 @@ Following is the list of existing packages in alphabetical order:
             * ``procmemdump`` *[yes/no]*: if enabled, take memory dumps of all actively monitored processes.
             * ``dll``: specify the name of an optional DLL to be used as a replacement for cuckoomon.dll.
 
-    * ``vbs``: used to run and analyzis **VBScript files**.
+    * ``ps1``: used to run and analyze **PowerShell scripts**.
+
+        **Options**:
+            * ``free`` *[yes/no]*: if enabled, no behavioral logs will be produced and the malware will be executed freely.
+            * ``procmemdump`` *[yes/no]*: if enabled, take memory dumps of all actively monitored processes.
+            * ``dll``: specify the name of an optional DLL to be used as a replacement for cuckoomon.dll.
+
+    * ``python``: used to run and analyze **Python scripts**.
+
+        **Options**:
+            * ``free`` *[yes/no]*: if enabled, no behavioral logs will be produced and the malware will be executed freely.
+            * ``procmemdump`` *[yes/no]*: if enabled, take memory dumps of all actively monitored processes.
+            * ``dll``: specify the name of an optional DLL to be used as a replacement for cuckoomon.dll.
+
+    * ``vbs``: used to run and analysis **VBScript files**.
 
         **Options**:
             * ``free`` *[yes/no]*: if enabled, no behavioral logs will be produced and the malware will be executed freely.
@@ -125,14 +139,14 @@ You can find more details on how to start creating new analysis packages in the
 :doc:`../customization/packages` customization chapter.
 
 As you already know, you can select which analysis package to use by specifying
-its name at submission time (see :doc:`submit`) like following::
+its name at submission time (see :doc:`submit`) as follows::
 
     $ ./utils/submit.py --package <package name> /path/to/malware
 
 If none is specified, Cuckoo will try to detect the file type and select
 the correct analysis package accordingly. If the file type is not supported by
-default the analysis will be aborted, therefore you are always invited to
-specify the package name whenever it's possible.
+default the analysis will be aborted, therefore we encourage to
+specify the package name whenever possible.
 
 For example, to launch a malware and specify some options you can do::
 

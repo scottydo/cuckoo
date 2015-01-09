@@ -1,5 +1,73 @@
                                   CHANGELOG
 
+Cuckoo Sandbox 1.2 (TBD)
+===============================
+
+* Added Python analysis module
+* Added analysis deletion to web interface
+* Added machine information in reports
+* Added un-hook (if malware removes cuckoo's hooks) detection
+* Added Microsoft Crypto API hooks
+* Added process memory processing module
+* Added support for more Volatility plugins
+* Added more memory analysis information to web interface
+* Added memory dump to vmware workstation module
+* Added terminate_processes option to terminate processes before vm shutdown
+* Added optional aggressive sleep skipping mode
+* Added option to skip an area when comparing screenshots, avoiding duplicates
+* Added automatic generation of yara rules indexes
+* Added display of PE compilation time
+* Added support for Pillow (PIL fork)
+* Added search by string to web interface
+* Added various sanity warnings to move from sqlite to a real database
+* Added machine utility to automatically update machinery configuration
+* Added physical machine analysis
+* Added distributed analysis
+* Adedd memory dump to mongo db
+* Allow Auxiliary modules to run a callback at the very end of an analysis
+* Deprecated ./utils/clean.sh with ./cuckoo.py --clean
+* Replaced diStorm3 disassembler with Capstone disassembler
+* Refactored analysis packages
+* Fixed process.py to use delete_original and delete_bin_copy when used in auto mode
+* Fixed issue with tcpdump filters
+* Fixed analysis of HTML pages without a proper extension
+* Fixed logic bug in mouse activity emulator
+* Fixed bug in the sleep skipping mechanism
+* Fixed memory leak if using a old version of python-magic
+* Fixed out of memory exceptions when calculating hash of big files
+* Fixed BFP filter to skip agent traffic from PCAP
+* Removed hpfeeds reporting module
+
+Cuckoo Sandbox 1.1.1 (2014-10-07)
+=================================
+
+* Fixed path sanitization vulnerability in resultserver.
+
+Cuckoo Sandbox 1.1 (2014-04-07)
+===============================
+
+* Added imphash to static PE analysis
+* Added search for URLs in the web interface
+* Added search for PE Imphash in the web interface
+* Added possibility in web interface to queue to all machines
+* Added filtering by behavior category in Django web interface
+* Added analyzer log to Django web interface
+* Added REST API to retrieve screenshots associated with a task
+* Added REST API to retrieve the PCAP associated with a task
+* Added database migration utility
+* Added remote submission to submit.py utility
+* Added small stats utility (utils/stats.py)
+* Added analysis package for PowerShell scripts
+* Added overlay configuration for signatures (data/signatures_overlay.json)
+* Fixed bug in MAEC report
+* Fixed package selection for Office documents and CPL scripts
+* Fixed issue with tcpdump filters
+* Fixed unhandled exception when uploading files to the analysis machines
+* Fixed issues in CuckooMon that resulted in Internet Explorer crashes
+* Fixed bug in CuckooMon that caused mutexes to be resolved as file paths
+* Fixed bug in behavior processing module that resulted in a trailing backslash in summary's registry keys
+* Multiple minor bug fixes
+
 Cuckoo Sandbox 1.0 (2014-01-09)
 ===============================
 

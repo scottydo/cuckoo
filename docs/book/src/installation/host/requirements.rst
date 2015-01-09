@@ -9,11 +9,15 @@ Installing Python libraries
 ===========================
 
 Cuckoo host components are completely written in Python, therefore make sure to
-have an appropriate version installed. For current release **Python 2.7** is preferred.
+have an appropriate version installed. For the current release **Python 2.7** is preferred.
 
 Install Python on Ubuntu::
 
     $ sudo apt-get install python
+
+If you want to use the Django-based web interface, you'll have to install MongoDB too::
+
+    $ sudo apt-get install mongodb
 
 In order to properly function, Cuckoo requires SQLAlchemy and Python BSON to be installed.
 
@@ -33,22 +37,22 @@ The following libraries are not strictly required, but their installation is rec
     * `Magic`_ (Optional): for identifying files' formats (otherwise use "file" command line utility)
     * `Pydeep`_ (Optional): for calculating ssdeep fuzzy hash of files.
     * `Pymongo`_ (Optional): for storing the results in a MongoDB database.
-    * `Yara`_ and Yara Python (Optional): for matching Yara signatures (use release 1.7 or above or the svn version).
+    * `Yara`_ and Yara Python (Optional): for matching Yara signatures (release >=3.0).
     * `Libvirt`_ (Optional): for using the KVM machine manager.
-    * `Bottlepy`_ (Optional): for using the ``api.py`` or ``web.py`` utility (use release 0.10 or above).
-    * `Django`_ (Optional): for using the web interface (use release 1.5 or above).
+    * `Bottlepy`_ (Optional): for using the ``api.py`` or ``web.py`` utility (release >=0.10).
+    * `Django`_ (Optional): for using the web interface (release >=1.5).
     * `Pefile`_ (Optional): used for static analysis of PE32 binaries.
-    * `Volatility`_ (Optional): used for forensic analysis on memory
-    * `MAEC Python bindings`_ (Optional): used for MAEC reporting (use release 4.0 or above).
+    * `Volatility`_ (Optional): used for forensic analysis on memory (release >=2.4)
+    * `MAEC Python bindings`_ (Optional): used for MAEC reporting (use a release >=4.0, but <4.1).
     * `Chardet`_ (Optional): used for detecting string encoding.
 
 Some of them are already packaged in Debian/Ubuntu and can be installed with the following command::
 
-    $ sudo apt-get install python-dpkt python-jinja2 python-magic python-pymongo python-libvirt python-bottle python-pefile python-chardet
+    $ sudo apt-get install python-dpkt python-jinja2 python-magic python-pymongo python-gridfs python-libvirt python-bottle python-pefile python-chardet
 
 Except for *python-magic*, *python-dpkt* and *python-libvirt*, the others can be installed through ``pip`` too::
 
-    $ sudo pip install jinja2 pymongo bottle pefile maec django chardet
+    $ sudo pip install jinja2 pymongo bottle pefile cybox==2.0.1.4 maec==4.0.1.0 django chardet
 
 *Yara* and *Pydeep* will have to be installed manually, so please refer to their websites.
 
@@ -66,8 +70,8 @@ If want to use KVM it's packaged too and you can install it with the following c
 .. _Bottlepy: http://www.bottlepy.org
 .. _Django: https://www.djangoproject.com/
 .. _Pefile: http://code.google.com/p/pefile/
-.. _Volatility: http://code.google.com/p/volatility/
-.. _MAEC Python bindings: https://pypi.python.org/pypi/maec
+.. _Volatility: https://github.com/volatilityfoundation/
+.. _MAEC Python bindings: https://pypi.python.org/pypi/maec/4.0.1.0
 .. _Chardet: https://pypi.python.org/pypi/chardet
 
 Virtualization Software
@@ -83,12 +87,13 @@ For the sake of this guide we will assume that you have VirtualBox installed
 execution and general configuration of the sandbox.
 
 You are completely responsible for the choice, configuration and execution of
-your virtualization software, therefore please hold from asking help on it in our
-channels and lists: refer to the software's official documentation and support.
+your virtualization software, therefore please refrain from asking for help on
+it in our channels and lists: refer to the software's official documentation
+and support.
 
 Assuming you decide to go for VirtualBox, you can get the proper package for
 your distribution at the `official download page`_.
-The installation of VirtualBox is not in the purpose of this documentation, if you
+The installation of VirtualBox is outside the scope of this documentation, if you
 are not familiar with it please refer to the `official documentation`_.
 
 .. _VirtualBox: http://www.virtualbox.org
@@ -115,7 +120,7 @@ you'll have to set specific Linux capabilities to the binary::
 
 You can verify the results of last command with::
 
-    $ getcap /usr/sbin/tcpdump 
+    $ getcap /usr/sbin/tcpdump
     /usr/sbin/tcpdump = cap_net_admin,cap_net_raw+eip
 
 If you don't have `setcap` installed you can get it with::
@@ -131,7 +136,7 @@ Or otherwise (**not recommended**) do::
 Installing Volatility
 =====================
 
-Volatility is an optional tool to do forensic analysis on memory dumps. 
+Volatility is an optional tool to do forensic analysis on memory dumps.
 In combination with Cuckoo, it can automatically provide additional visibility
 into deep modifications in the operating system as well as detect the presence
 of rootkit technology that escaped the monitoring domain of Cuckoo's analyzer.
@@ -141,4 +146,4 @@ You can get it from the `official repository`_.
 
 See the volatility documentation for detailed instructions on how to install it.
 
-.. _official repository: http://code.google.com/p/volatility/
+.. _official repository: https://github.com/volatilityfoundation

@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Copyright (C) 2010-2014 Cuckoo Sandbox Developers.
+# Copyright (C) 2010-2015 Cuckoo Foundation.
 # This file is part of Cuckoo Sandbox - http://www.cuckoosandbox.org
 # See the file 'docs/LICENSE' for copying permission.
 
@@ -35,6 +35,7 @@ def foreach_child(hwnd, lparam):
         "enable",
         "don't send",
         "continue",
+        "unzip",
     ]
 
     classname = create_unicode_buffer(50)
@@ -54,6 +55,12 @@ def foreach_child(hwnd, lparam):
                 USER32.SetForegroundWindow(hwnd)
                 KERNEL32.Sleep(1000)
                 USER32.SendMessageW(hwnd, BM_CLICK, 0, 0)
+        # Don't search for childs (USER32.EnumChildWindows).
+        return False
+    else:
+        # Recursively search for childs (USER32.EnumChildWindows).
+        return True
+
 
 # Callback procedure invoked for every enumerated window.
 def foreach_window(hwnd, lparam):
@@ -61,13 +68,14 @@ def foreach_window(hwnd, lparam):
     # for buttons.
     if USER32.IsWindowVisible(hwnd):
         USER32.EnumChildWindows(hwnd, EnumChildProc(foreach_child), 0)
+    return True
 
 def move_mouse():
     x = random.randint(0, RESOLUTION["x"])
     y = random.randint(0, RESOLUTION["y"])
 
     # Originally was:
-    #USER32.mouse_event(0x8000, x, y, 0, None)
+    # USER32.mouse_event(0x8000, x, y, 0, None)
     # Changed to SetCurorPos, since using GetCursorPos would not detect
     # the mouse events. This actually moves the cursor around which might
     # cause some unintended activity on the desktop. We might want to make
@@ -95,7 +103,7 @@ class Human(Auxiliary, Thread):
 
     def run(self):
         while self.do_run:
-            move_mouse()
             click_mouse()
+            move_mouse()
             USER32.EnumWindows(EnumWindowsProc(foreach_window), 0)
             KERNEL32.Sleep(1000)

@@ -1,8 +1,9 @@
-# Copyright (C) 2010-2014 Cuckoo Sandbox Developers.
+# Copyright (C) 2010-2015 Cuckoo Foundation.
 # This file is part of Cuckoo Sandbox - http://www.cuckoosandbox.org
 # See the file 'docs/LICENSE' for copying permission.
 
 import os
+import json
 import pkgutil
 import inspect
 import logging
@@ -72,7 +73,7 @@ class RunAuxiliary(object):
     def __init__(self, task, machine):
         self.task = task
         self.machine = machine
-        self.cfg = Config(cfg=os.path.join(CUCKOO_ROOT, "conf", "auxiliary.conf"))
+        self.cfg = Config("auxiliary")
         self.enabled = []
 
     def start(self):
@@ -108,11 +109,12 @@ class RunAuxiliary(object):
                     current.start()
                 except NotImplementedError:
                     pass
-                #except Exception as e:
-                #    log.warning("Unable to start auxiliary module %s: %s",
-                #                module_name, e)
+                except Exception as e:
+                    log.warning("Unable to start auxiliary module %s: %s",
+                                module_name, e)
                 else:
-                    log.debug("Stopped auxiliary module: %s", module_name)
+                    log.debug("Started auxiliary module: %s",
+                              current.__class__.__name__)
                     self.enabled.append(current)
 
     def stop(self):
@@ -124,7 +126,8 @@ class RunAuxiliary(object):
             except Exception as e:
                 log.warning("Unable to stop auxiliary module: %s", e)
             else:
-                log.debug("Stopped auxiliary module: %s", module)
+                log.debug("Stopped auxiliary module: %s",
+                          module.__class__.__name__)
 
 class RunProcessing(object):
     """Analysis Results Processing Engine.
@@ -138,7 +141,7 @@ class RunProcessing(object):
         """@param task_id: ID of the analyses to process."""
         self.task = Database().view_task(task_id).to_dict()
         self.analysis_path = os.path.join(CUCKOO_ROOT, "storage", "analyses", str(task_id))
-        self.cfg = Config(cfg=os.path.join(CUCKOO_ROOT, "conf", "processing.conf"))
+        self.cfg = Config("processing")
 
     def process(self, module):
         """Run a processing module.
@@ -239,6 +242,28 @@ class RunSignatures(object):
     def __init__(self, results):
         self.results = results
 
+    def _load_overlay(self):
+        """Loads overlay data from a json file.
+        See example in data/signature_overlay.json
+        """
+        filename = os.path.join(CUCKOO_ROOT, "data", "signature_overlay.json")
+
+        try:
+            with open(filename) as fh:
+                odata = json.load(fh)
+                return odata
+        except IOError:
+            pass
+
+        return {}
+
+    def _apply_overlay(self, signature, overlay):
+        """Applies the overlay attributes to the signature object."""
+        if signature.name in overlay:
+            attrs = overlay[signature.name]
+            for attr, value in attrs.items():
+                setattr(signature, attr, value)
+
     def _check_signature_version(self, current):
         """Check signature version.
         @param current: signature class/instance to check.
@@ -313,7 +338,6 @@ class RunSignatures(object):
             # from it and append it to the results container.
             if current.run():
                 log.debug("Analysis matched signature \"%s\"", current.name)
-
                 # Return information on the matched signature.
                 return current.as_result()
         except NotImplementedError:
@@ -332,6 +356,11 @@ class RunSignatures(object):
                         for sig in complete_list
                         if sig.enabled and sig.evented and
                         self._check_signature_version(sig)]
+
+        overlay = self._load_overlay()
+        log.debug("Applying signature overlays for signatures: %s", ", ".join(overlay.keys()))
+        for signature in complete_list + evented_list:
+            self._apply_overlay(signature, overlay)
 
         if evented_list:
             log.debug("Running %u evented signatures", len(evented_list))
@@ -374,7 +403,7 @@ class RunSignatures(object):
                             matched.append(sig.as_result())
                             if sig in complete_list:
                                 complete_list.remove(sig)
-                        
+
                         # Either True or False, we don't need to check this sig anymore.
                         evented_list.remove(sig)
                         del sig
@@ -395,8 +424,12 @@ class RunSignatures(object):
                         if sig in complete_list:
                             complete_list.remove(sig)
 
+        # Link this into the results already at this point, so non-evented signatures can use it
+        self.results["signatures"] = matched
+
         # Compat loop for old-style (non evented) signatures.
         if complete_list:
+            complete_list.sort(key=lambda sig: sig.order)
             log.debug("Running non-evented signatures")
 
             for signature in complete_list:
@@ -410,11 +443,8 @@ class RunSignatures(object):
                     for process in self.results["behavior"]["processes"]:
                         process["calls"].reset()
 
-        if matched:
-            # Sort the matched signatures by their severity level.
-            matched.sort(key=lambda key: key["severity"])
-
-        self.results["signatures"] = matched
+        # Sort the matched signatures by their severity level.
+        matched.sort(key=lambda key: key["severity"])
 
 class RunReporting:
     """Reporting Engine.
@@ -429,7 +459,7 @@ class RunReporting:
         self.task = Database().view_task(task_id).to_dict()
         self.results = results
         self.analysis_path = os.path.join(CUCKOO_ROOT, "storage", "analyses", str(task_id))
-        self.cfg = Config(cfg=os.path.join(CUCKOO_ROOT, "conf", "reporting.conf"))
+        self.cfg = Config("reporting")
 
     def process(self, module):
         """Run a single reporting module.
@@ -465,7 +495,7 @@ class RunReporting:
         # Give it the the relevant reporting.conf section.
         current.set_options(options)
         # Load the content of the analysis.conf file.
-        current.cfg = Config(current.conf_path)
+        current.cfg = Config(cfg=current.conf_path)
 
         try:
             current.run(self.results)

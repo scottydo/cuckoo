@@ -4,6 +4,7 @@ Submit an Analysis
 
     * :ref:`submitpy`
     * :ref:`apipy`
+    * :ref:`distpy`
     * :ref:`webpy`
     * :ref:`python`
 
@@ -15,11 +16,12 @@ Submission Utility
 The easiest way to submit an analysis is to use the provided *submit.py*
 command-line utility. It currently has the following options available::
 
-    usage: submit.py [-h] [--url] [--package PACKAGE] [--custom CUSTOM]
-                     [--timeout TIMEOUT] [--options OPTIONS] [--priority PRIORITY]
-                     [--machine MACHINE] [--platform PLATFORM] [--memory]
-                     [--enforce-timeout] [--clock CLOCK] [--tags TAGS] [--max MAX]
-                     [--pattern PATTERN] [--shuffle] [--unique] [--quiet]
+    usage: submit.py [-h] [--remote REMOTE] [--url] [--package PACKAGE]
+                     [--custom CUSTOM] [--timeout TIMEOUT] [--options OPTIONS]
+                     [--priority PRIORITY] [--machine MACHINE]
+                     [--platform PLATFORM] [--memory] [--enforce-timeout]
+                     [--clock CLOCK] [--tags TAGS] [--max MAX] [--pattern PATTERN]
+                     [--shuffle] [--unique] [--quiet]
                      target
 
     positional arguments:
@@ -27,6 +29,8 @@ command-line utility. It currently has the following options available::
 
     optional arguments:
       -h, --help           show this help message and exit
+      --remote REMOTE      Specify IP:port to a Cuckoo API server to submit
+                           remotely
       --url                Specify whether the target is an URL
       --package PACKAGE    Specify an analysis package
       --custom CUSTOM      Specify any custom value
@@ -76,7 +80,7 @@ The concept of analysis packages will be dealt later in this documentation (at
 
     $ ./utils/submit.py --package <name of package> /path/to/binary
 
-*Example*: submit a local binary and specify a custom analysis package and 
+*Example*: submit a local binary and specify a custom analysis package and
 some options (in this case a command line argument for the malware)::
 
     $ ./utils/submit.py --package exe --options arguments=--dosomething /path/to/binary.exe
@@ -97,11 +101,11 @@ some options (in this case a command line argument for the malware)::
 
     $ ./utils/submit.py --enforce-timeout /path/to/binary
 
-*Example*: submit a local binary and set virutal machine clock. Format is %m-%d-%Y %H:%M:%S. If not specified current time is used. For example if we want run a sample the 24 january 2001 at 14:41:20::
+*Example*: submit a local binary and set virtual machine clock. Format is %m-%d-%Y %H:%M:%S. If not specified, the current time is used. For example if we want run a sample the 24 january 2001 at 14:41:20::
 
     $ ./utils/submit.py --clock "01-24-2001 14:41:20" /path/to/binary
 
-*Example*: submit a sample for volatility analysis (to reduce side effects of the cuckoo hooking, switch it off by *options free=True*)::
+*Example*: submit a sample for Volatility analysis (to reduce side effects of the cuckoo hooking, switch it off with *options free=True*)::
 
     $ ./utils/submit.py --memory --options free=True /path/to/binary
 
@@ -110,7 +114,7 @@ some options (in this case a command line argument for the malware)::
 web.py
 ======
 
-Cuckoo provides a very small utility under ``utils/web.py``, which will bind a simple 
+Cuckoo provides a very small utility under ``utils/web.py``, which will bind a simple
 webserver on localhost port 8080, through which you will be able to browse through
 existing reports as well as submit new files.
 
@@ -125,6 +129,14 @@ API
 
 Detailed usage of the REST API interface is described in :doc:`api`.
 
+.. _distpy:
+
+Distributed Cuckoo
+==================
+
+Detailed usage of the Distributed Cuckoo API interface is described in
+:doc:`dist`.
+
 .. _python:
 
 Python Functions
@@ -136,10 +148,10 @@ use SQLite, MySQL, PostgreSQL and several other SQL database systems.
 
 Cuckoo is designed to be easily integrated in larger solutions and to be fully
 automated. In order to automate analysis submission we suggest to use the REST
-API interface described in :doc:`api`, but in the case you want to write your
-own Python submission script, you can use the ``add_path()`` and ``add_url()`` functions.
+API interface described in :doc:`api`, but in case you want to write your
+own Python submission script, you can also use the ``add_path()`` and ``add_url()`` functions.
 
-.. function:: add_path(file_path[, timeout=0[, package=None[, options=None[, priority=1[, custom=None[, machine=None[, platform=None[, memory=False[, enforce_timeout=False]]]]]]]]])
+.. function:: add_path(file_path[, timeout=0[, package=None[, options=None[, priority=1[, custom=None[, machine=None[, platform=None[, memory=False[, enforce_timeout=False], clock=None[]]]]]]]]])
 
     Add a local file to the list of pending analysis tasks. Returns the ID of the newly generated task.
 
@@ -161,7 +173,7 @@ own Python submission script, you can use the ``add_path()`` and ``add_url()`` f
     :type platform: string or None
     :param memory: set to ``True`` to generate a full memory dump of the analysis machine
     :type memory: True or False
-    :param enforce_timeout: set to ``True`` to force the executuion for the full timeout
+    :param enforce_timeout: set to ``True`` to force the execution for the full timeout
     :type enforce_timeout: True or False
     :param clock: provide a custom clock time to set in the analysis machine
     :type clock: string or None
@@ -176,9 +188,9 @@ own Python submission script, you can use the ``add_path()`` and ``add_url()`` f
         >>> db = Database()
         >>> db.add_path("/tmp/malware.exe")
         1
-        >>> 
+        >>>
 
-.. function:: add_url(url[, timeout=0[, package=None[, options=None[, priority=1[, custom=None[, machine=None[, platform=None[, memory=False[, enforce_timeout=False]]]]]]]]])
+.. function:: add_url(url[, timeout=0[, package=None[, options=None[, priority=1[, custom=None[, machine=None[, platform=None[, memory=False[, enforce_timeout=False], clock=None[]]]]]]]]])
 
     Add a local file to the list of pending analysis tasks. Returns the ID of the newly generated task.
 
@@ -200,7 +212,7 @@ own Python submission script, you can use the ``add_path()`` and ``add_url()`` f
     :type platform: string or None
     :param memory: set to ``True`` to generate a full memory dump of the analysis machine
     :type memory: True or False
-    :param enforce_timeout: set to ``True`` to force the executuion for the full timeout
+    :param enforce_timeout: set to ``True`` to force the execution for the full timeout
     :type enforce_timeout: True or False
     :param clock: provide a custom clock time to set in the analysis machine
     :type clock: string or None
@@ -215,6 +227,6 @@ Example Usage:
     >>> db = Database()
     >>> db.add_url("http://www.cuckoosandbox.org")
     2
-    >>> 
+    >>>
 
 .. _`SQLAlchemy`: http://www.sqlalchemy.org

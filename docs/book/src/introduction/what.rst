@@ -32,12 +32,12 @@ first time.
 
 In March 2011, Cuckoo has been selected again as a supported project during
 Google Summer of Code 2011 with The Honeynet Project, during which
-*Dario Fernandes* joined the project and extended its functionalities.
+*Dario Fernandes* joined the project and extended its functionality.
 
 On November 2nd 2011 Cuckoo the release of its 0.2 version to the public as the
 first real stable release.
 On late November 2011 *Alessandro "jekil" Tanasi* joined the team expanding
-Cuckoo's processing and reporting functionalities.
+Cuckoo's processing and reporting functionality.
 
 On December 2011 Cuckoo v0.3 gets released and quickly hits release 0.3.2 in
 early February.
@@ -66,12 +66,18 @@ at Black Hat Las Vegas.
 
 On 9th January 2014, Cuckoo Sandbox 1.0 is released.
 
+In March 2014 `Cuckoo Foundation`_ born as non-profit organization dedicated to growth of Cuckoo Sandbox and the
+surrounding projects and initiatives.
+
+On 7th April 2014, Cuckoo Sandbox 1.1 is released.
+
 .. _`Google Summer of Code`: http://www.google-melange.com
 .. _`The Honeynet Project`: http://www.honeynet.org
 .. _`Malwr.com`: http://malwr.com
 .. _`Magnificent7`: http://community.rapid7.com/community/open_source/magnificent7
 .. _`Mo' Malware Mo' Problems - Cuckoo Sandbox to the rescue`: https://media.blackhat.com/us-13/US-13-Bremer-Mo-Malware-Mo-Problems-Cuckoo-Sandbox-Slides.pdf
 .. _`Rapid7`: http://www.rapid7.com
+.. _`Cuckoo Foundation`: http://cuckoofoundation.org/
 
 Use Cases
 =========
@@ -91,6 +97,7 @@ It can be used to analyze:
     * Visual Basic (VB) scripts
     * ZIP files
     * Java JAR
+    * Python files
     * *Almost anything else*
 
 Thanks to its modularity and powerful scripting capabilities, there's not limit
@@ -111,15 +118,15 @@ software) and a number of Guest machines (virtual machines for analysis).
 
 The Host runs the core component of the sandbox that manages the whole
 analysis process, while the Guests are the isolated environments
-where the malwares get actually safely executed and analyzed.
+where the malware samples get actually safely executed and analyzed.
 
 The following picture explains Cuckoo's main architecture:
 
     .. image:: ../_images/schemas/architecture-main.png
         :align: center
 
-Although recommended setup is *GNU/Linux* (Ubuntu preferrably) as host and
-*Windows XP Service Pack 3* as guest, Cuckoo proved to work smoothly also on
+Although the recommended setup is *GNU/Linux* (Ubuntu preferably) as host and
+*Windows XP Service Pack 3* as guest, Cuckoo has proved to work smoothly also on
 *Mac OS X* as host and *Windows Vista* and *Windows 7* as guests.
 
 Obtaining Cuckoo

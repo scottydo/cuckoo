@@ -1,8 +1,9 @@
-# Copyright (C) 2010-2014 Cuckoo Sandbox Developers.
+# Copyright (C) 2010-2015 Cuckoo Foundation.
 # This file is part of Cuckoo Sandbox - http://www.cuckoosandbox.org
 # See the file 'docs/LICENSE' for copying permission.
 
 import os
+from datetime import datetime
 
 try:
     import magic
@@ -21,7 +22,6 @@ from lib.cuckoo.common.abstracts import Processing
 from lib.cuckoo.common.constants import CUCKOO_ROOT
 from lib.cuckoo.common.objects import File
 from lib.cuckoo.common.utils import convert_to_printable
-
 
 # Partially taken from
 # http://malwarecookbook.googlecode.com/svn/trunk/3/8/pescanner.py
@@ -51,6 +51,11 @@ class PortableExecutable:
                 file_type = magic.from_buffer(data)
             except Exception:
                 return None
+        finally:
+            try:
+                ms.close()
+            except:
+                pass
 
         return file_type
 
@@ -89,7 +94,7 @@ class PortableExecutable:
                         symbols.append(symbol)
 
                     imports_section = {}
-                    imports_section["dll"] = entry.dll
+                    imports_section["dll"] = convert_to_printable(entry.dll)
                     imports_section["imports"] = symbols
                     imports.append(imports_section)
                 except:
@@ -211,6 +216,33 @@ class PortableExecutable:
 
         return infos
 
+
+    def _get_imphash(self):
+        """Gets imphash.
+        @return: imphash string or None.
+        """
+        if not self.pe:
+            return None
+
+        try:
+            return self.pe.get_imphash()
+        except AttributeError:
+            return None
+
+    def _get_timestamp(self):
+        """Get compilation timestamp.
+        @return: timestamp or None.
+        """
+        if not self.pe:
+            return None
+
+        try:
+            pe_timestamp = self.pe.FILE_HEADER.TimeDateStamp
+        except AttributeError:
+            return None
+
+        return datetime.fromtimestamp(pe_timestamp).strftime("%Y-%m-%d %H:%M:%S")
+
     def run(self):
         """Run analysis.
         @return: analysis results dict or None.
@@ -230,6 +262,8 @@ class PortableExecutable:
         results["pe_sections"] = self._get_sections()
         results["pe_resources"] = self._get_resources()
         results["pe_versioninfo"] = self._get_versioninfo()
+        results["pe_imphash"] = self._get_imphash()
+        results["pe_timestamp"] = self._get_timestamp()
         results["imported_dll_count"] = len([x for x in results["pe_imports"] if x.get("dll")])
         return results
 

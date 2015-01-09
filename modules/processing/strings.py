@@ -1,4 +1,4 @@
-# Copyright (C) 2010-2014 Cuckoo Sandbox Developers.
+# Copyright (C) 2010-2015 Cuckoo Foundation.
 # This file is part of Cuckoo Sandbox - http://www.cuckoosandbox.org
 # See the file 'docs/LICENSE' for copying permission.
 
@@ -27,5 +27,6 @@ class Strings(Processing):
             except (IOError, OSError) as e:
                 raise CuckooProcessingError("Error opening file %s" % e)
             strings = re.findall("[\x1f-\x7e]{6,}", data)
+            strings += [str(ws.decode("utf-16le")) for ws in re.findall("(?:[\x1f-\x7e][\x00]){6,}", data)]
 
         return strings
